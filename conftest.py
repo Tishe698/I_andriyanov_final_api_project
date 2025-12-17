@@ -1,4 +1,5 @@
 import pytest
+import copy
 
 from endpoints.change_put_meme import ChangePutMeme
 from endpoints.create_new_meme import CreateNewMeme
@@ -8,46 +9,53 @@ from endpoints.get_one_meme import GetOneMeme
 
 
 PAYLOAD = {
-    'text': 'memes if dog',
-    'url': 'https://memi.klev.club/uploads/posts/2024-04/memi-klev-club-19lu-p-memi-s-dovolnoi-sobakoi-31.jpg',
-    'tags': ['dogs', 'funny', 'animals'],
-    'info': {'author': 'test_user', 'rating': 5}
-}
+    "text": "memes if dog",
+    "url": "https://memi.klev.club/uploads/posts/2024-04/memi-klev-club-19lu-p-memi-s-dovolnoi-sobakoi-31.jpg",
+    "tags": ["dogs", "funny", "animals"],
+    "info": {"author": "test_user", "rating": 5},
+}  # базовый payload для создания мема
 
 PAYLOAD_CHANGE = {
-    'text': 'memes if dogiies',
-    'url': 'https://memi.klev.club/uploads/posts/2024-04/memi-klev-club-19lu-p-memi-s-dovolnoi-sobakoi-31.jpg',
-    'tags': ['dogs', 'funny', 'animals'],
-    'info': {'author': 'test_user', 'rating': 5}
-}
-
+    "text": "memes if dogiies",
+    "url": "https://memi.klev.club/uploads/posts/2024-04/memi-klev-club-19lu-p-memi-s-dovolnoi-sobakoi-31.jpg",
+    "tags": ["doooogi", "super", "animals"],
+    "info": {"author": "tester_user", "rating": 2},
+}  # данные для последующего изменения мема
 
 
 @pytest.fixture
 def fixt_get_all_meme():
-    return GetAllMeme()
+    return GetAllMeme()  # клиент для GET /meme
+
 
 @pytest.fixture
 def fix_create_new_meme():
-    return CreateNewMeme()
+    return CreateNewMeme()  # клиент для POST /meme
+
 
 @pytest.fixture
 def fixt_delete_meme():
-    return DeleteMeme()
+    return DeleteMeme()  # клиент для DELETE /meme/{id}
 
 
 @pytest.fixture
 def fixt_get_post_id(fix_create_new_meme, fixt_delete_meme):
-    fix_create_new_meme.full_req_create_new_meme(payload=PAYLOAD)
-    post_id = fix_create_new_meme.post_id
-    yield post_id
-    fixt_delete_meme.full_req_delete_meme(post_id)
+    fix_create_new_meme.full_req_create_new_meme(payload=PAYLOAD)  # создаём мем для теста
+    post_id = fix_create_new_meme.post_id  # сохраняем id созданного мема
+    yield post_id  # отдаём id в тест
+    fixt_delete_meme.full_req_delete_meme(post_id)  # чистим за собой после теста
+
+
+@pytest.fixture
+def fixt_payload_change():
+    return copy.deepcopy(PAYLOAD_CHANGE)  # выдаём копию, чтобы тесты могли править поля
+
 
 @pytest.fixture
 def fixt_get_one_meme():
-    return GetOneMeme()
+    return GetOneMeme()  # клиент для GET /meme/{id}
+
 
 @pytest.fixture
 def fixt_change_put_meme():
-    return ChangePutMeme()
-
+    return ChangePutMeme()  # клиент для PUT /meme/{id}

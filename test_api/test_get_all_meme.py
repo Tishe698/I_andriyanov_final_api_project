@@ -2,7 +2,7 @@ import allure
 
 
 @allure.feature("get all meme")
-@allure.story("Получение всех постов")
+@allure.story("Получение всех мемов")
 def test_get_all_meme(fixt_get_all_meme):
     fixt_get_all_meme.full_req_get_all_meme()  # запрос списка всех мемов
     with allure.step("Запрашиваем список мемов и убеждаемся в статусе 200"):

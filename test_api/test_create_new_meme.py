@@ -8,7 +8,7 @@ DATA = [PAYLOAD]
 
 
 @allure.feature("creaete meme")
-@allure.story("Создание поста мема")
+@allure.story("Создание мема")
 @pytest.mark.parametrize("data", DATA)
 def test_create_new_meme(fix_create_new_meme, data):
     fix_create_new_meme.full_req_create_new_meme(payload=data)  # создаём новый мем по базовому payload

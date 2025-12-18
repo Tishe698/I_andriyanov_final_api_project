@@ -6,6 +6,8 @@ from endpoints.create_new_meme import CreateNewMeme
 from endpoints.delete_meme import DeleteMeme
 from endpoints.get_all_meme import GetAllMeme
 from endpoints.get_one_meme import GetOneMeme
+from endpoints.Authorization_token import GetAuthorizationToken
+from endpoints.live_token import LiveToken
 
 
 PAYLOAD = {
@@ -39,11 +41,11 @@ def fixt_delete_meme():
 
 
 @pytest.fixture
-def fixt_get_post_id(fix_create_new_meme, fixt_delete_meme):
+def fixt_get_meme_id(fix_create_new_meme, fixt_delete_meme):
     fix_create_new_meme.full_req_create_new_meme(payload=PAYLOAD)  # создаём мем для теста
-    post_id = fix_create_new_meme.post_id  # сохраняем id созданного мема
-    yield post_id  # отдаём id в тест
-    fixt_delete_meme.full_req_delete_meme(post_id)  # чистим за собой после теста
+    meme_id = fix_create_new_meme.meme_id  # сохраняем id созданного мема
+    yield meme_id  # отдаём id в тест
+    fixt_delete_meme.full_req_delete_meme(meme_id)  # чистим за собой после теста
 
 
 @pytest.fixture
@@ -59,3 +61,13 @@ def fixt_get_one_meme():
 @pytest.fixture
 def fixt_change_put_meme():
     return ChangePutMeme()  # клиент для PUT /meme/{id}
+
+
+@pytest.fixture
+def fixt_get_token():
+    return GetAuthorizationToken()  # клиент для получения токена
+
+
+@pytest.fixture
+def fixt_is_alive_token():
+    return LiveToken()  # клиент для проверки жив ли токен

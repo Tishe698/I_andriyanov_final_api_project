@@ -42,7 +42,9 @@ def fixt_delete_meme():
 
 @pytest.fixture
 def fixt_get_meme_id(fix_create_new_meme, fixt_delete_meme):
-    fix_create_new_meme.full_req_create_new_meme(payload=PAYLOAD)  # создаём мем для теста
+    fix_create_new_meme.full_req_create_new_meme(
+        payload=PAYLOAD
+    )  # создаём мем для теста
     meme_id = fix_create_new_meme.meme_id  # сохраняем id созданного мема
     yield meme_id  # отдаём id в тест
     fixt_delete_meme.full_req_delete_meme(meme_id)  # чистим за собой после теста

@@ -2,20 +2,32 @@ import allure
 from conftest import PAYLOAD  # исходные данные для создания мема в фикстуре
 
 
+# Позитивный тест: получение существующего мема
 @allure.feature("get one meme")
 @allure.story("Получение одного мема")
-def test_get_one_meme(fixt_get_one_meme, fixt_get_meme_id):
-    meme_id = fixt_get_meme_id  # id мема создаётся фикстурой заранее (POST в fixt_get_meme_id)
-    fixt_get_one_meme.full_req_get_one_meme(meme_id)  # первый запрос: читаем только что созданный мем
-    with allure.step("Проверяем статус 200"):
-        fixt_get_one_meme.check_status_code_is_200()  # убеждаемся, что GET вернул успешный код
-    with allure.step("Проверяем, что полученный мем соответствует созданному"):
-        json_response = fixt_get_one_meme.json  # тело ответа из последнего GET
-        assert json_response["id"] == meme_id  # id должен совпасть с созданным
-        assert json_response["text"] == PAYLOAD["text"]  # поля должны совпасть с исходными данными
-        assert json_response["url"] == PAYLOAD["url"]
-        assert json_response["tags"] == PAYLOAD["tags"]
-        assert json_response["info"] == PAYLOAD["info"]
-    with allure.step("Проверяем, что при запросе несуществующего мема возвращается 404"):
-        fixt_get_one_meme.full_req_get_one_meme(9999999)  # второй запрос: заведомо несуществующий id
-        assert fixt_get_one_meme.response.status_code == 404  # ожидаем корректный статус ошибки
+def test_get_one_meme_success(fixt_get_one_meme, fixt_get_meme_id):
+    meme_id = fixt_get_meme_id  # id мема создаётся фикстурой заранее
+    fixt_get_one_meme.full_req_get_one_meme(meme_id)  # запрос мема по id
+    fixt_get_one_meme.check_status_code(200)  # проверяем статус 200
+    fixt_get_one_meme.check_response_matches_payload(
+        PAYLOAD
+    )  # проверяем что данные совпадают
+
+
+# Негативный тест: получение несуществующего мема
+@allure.feature("get one meme")
+@allure.story("Ошибка при запросе несуществующего мема")
+def test_get_one_meme_not_found(fixt_get_one_meme):
+    fixt_get_one_meme.full_req_get_one_meme(9999999)  # заведомо несуществующий id
+    fixt_get_one_meme.check_status_code(404)  # ожидаем ошибку 404
+
+
+# Негативный тест: получение мема без авторизации
+@allure.feature("get one meme")
+@allure.story("Ошибка при запросе мема без токена")
+def test_get_one_meme_unauthorized(fixt_get_one_meme, fixt_get_meme_id):
+    meme_id = fixt_get_meme_id  # id мема из фикстуры
+    fixt_get_one_meme.full_req_get_one_meme(
+        meme_id, headers=fixt_get_one_meme.BAD_TOKEN_HEADERS  # неверный токен
+    )
+    fixt_get_one_meme.check_status_code(401)  # ожидаем ошибку 401

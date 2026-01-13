@@ -1,4 +1,5 @@
 import requests
+import allure  # для красивых шагов в отчёте
 
 from endpoints.base_endpoint import BaseEndpoint
 
@@ -14,3 +15,10 @@ class LiveToken(BaseEndpoint):
         except ValueError:
             self.json = None  # например, 404 с HTML
         return self.response
+
+    @allure.step("Check that token is alive message present")  # шаг в Allure-отчёте
+    def check_token_is_alive_message(self):
+        # проверяем что в ответе есть сообщение о живом токене
+        assert (
+            "Token is alive. Username is" in self.response.text
+        ), f"Expected 'Token is alive' message, got: {self.response.text}"

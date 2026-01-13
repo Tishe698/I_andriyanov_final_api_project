@@ -6,9 +6,12 @@ class BaseEndpoint:
     # Базовый URL твоего API (общий для всех запросов)
     url = "http://memesapi.course.qa-practice.com"
 
+    # Заголовки с невалидным токеном — для тестов на 401
+    BAD_TOKEN_HEADERS = {"Authorization": "BadToken"}
+
     # Сюда каждый эндпоинт будет класть результат последнего запроса
     response = None  # объект requests.Response
-    json = None      # распарсенный response.json()
+    json = None  # распарсенный response.json()
 
     # ВАЖНО:
     # Это атрибут КЛАССА (общий для всех экземпляров BaseEndpoint и его наследников).
@@ -68,10 +71,16 @@ class BaseEndpoint:
         # ВАЖНО: ключ должен совпадать с тем, что реально возвращает API
         return r.json()["token"]
 
-    @allure.step("Check that response is 200")
-    def check_status_code_is_200(self):
-        """
-        Базовая проверка успешного ответа.
-        Её вызывают наследники после запроса.
-        """
-        assert self.response.status_code == 200
+    @allure.step("check status code is {expected_code}")
+    def check_status_code(self, expected_code: int):
+        assert (
+            self.response.status_code == expected_code
+        ), f"Expected {expected_code}, got {self.response.status_code}"
+
+    @allure.step("Check that response data matches sent payload")  # шаг в Allure-отчёте
+    def check_response_matches_payload(self, payload):
+        # проверяем что каждое поле в ответе совпадает с тем, что отправили
+        assert self.json["text"] == payload["text"], "text doesn't match"
+        assert self.json["url"] == payload["url"], "url doesn't match"
+        assert self.json["tags"] == payload["tags"], "tags doesn't match"
+        assert self.json["info"] == payload["info"], "info doesn't match"

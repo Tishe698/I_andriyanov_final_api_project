@@ -1,5 +1,5 @@
 import allure
-from conftest import PAYLOAD  # исходные данные для создания мема в фикстуре
+from payload import PAYLOAD  # исходные данные для создания мема в фикстуре
 
 
 # Позитивный тест: получение существующего мема

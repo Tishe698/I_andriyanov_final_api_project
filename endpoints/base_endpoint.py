@@ -77,6 +77,11 @@ class BaseEndpoint:
             self.response.status_code == expected_code
         ), f"Expected {expected_code}, got {self.response.status_code}"
 
+    @allure.step("Check response is not empty")
+    def check_response_not_empty(self):
+        assert self.json is not None, "Response body is None"
+        assert len(self.json) > 0, "Response is empty"
+
     @allure.step("Check that response data matches sent payload")  # шаг в Allure-отчёте
     def check_response_matches_payload(self, payload):
         # проверяем что каждое поле в ответе совпадает с тем, что отправили

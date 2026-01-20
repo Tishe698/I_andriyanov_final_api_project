@@ -9,20 +9,7 @@ from endpoints.get_one_meme import GetOneMeme
 from endpoints.Authorization_token import GetAuthorizationToken
 from endpoints.live_token import LiveToken
 
-
-PAYLOAD = {
-    "text": "memes if dog",
-    "url": "https://memi.klev.club/uploads/posts/2024-04/memi-klev-club-19lu-p-memi-s-dovolnoi-sobakoi-31.jpg",
-    "tags": ["dogs", "funny", "animals"],
-    "info": {"author": "test_user", "rating": 5},
-}  # базовый payload для создания мема
-
-PAYLOAD_CHANGE = {
-    "text": "memes if dogiies",
-    "url": "https://memi.klev.club/uploads/posts/2024-04/memi-klev-club-19lu-p-memi-s-dovolnoi-sobakoi-31.jpg",
-    "tags": ["doooogi", "super", "animals"],
-    "info": {"author": "tester_user", "rating": 2},
-}  # данные для последующего изменения мема
+from payload import PAYLOAD,PAYLOAD_CHANGE
 
 
 @pytest.fixture
